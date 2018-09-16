@@ -42,6 +42,7 @@ public class Server2
         // // table.getnodeId();
         System.out.print("neiborhoodNum:");
         System.out.println(neiborhoodNum);
+        System.out.println("this is rajan");
 
         // this.table = table
         long start = System.currentTimeMillis();
