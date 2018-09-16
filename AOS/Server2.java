@@ -18,20 +18,7 @@ public class Server2
     public static void main(String[] args) throws IOException  
     { 
 
-    
-        // server is listening on port 5056 
-        
 
-        // portNum = Integer.parseInt(args[0]);
-        // nodeId = Integer.parseInt(args[1]);
-        // System.out.println("Port#= "+portNum);
-        // System.out.println("nodeID= "+nodeId);
-        
-        // // Parse the config.txt
-        // parseConfig config = new parseConfig(nodeId, args[2]);
-        
-        // // Print the configuration file
-        // config.printConfig(nodeId);
         portNum = Integer.parseInt(args[0]);
         nodeId = Integer.parseInt(args[1]);
         System.out.println("Port#= "+portNum);
@@ -41,71 +28,18 @@ public class Server2
 
 
         neiborhoodNum = config.getNeighborsCnt();
-        // ***
-        // Todo: the port has to be assigned as argument when launcher.sh calls this Server.class
-        // ***
-        ServerSocket ss = new ServerSocket(portNum);                                       
-        // ***
-        // End Todo
-        // ***  
-
-        // ***
-        // Todo: Get all neiborhood information
-        // ---
-        // 1. call getNeighbors(){}
-        // ---
-        // End Todo
-        // ***
-
-        // ***
-        // Todo: Establish socket to neiborhood, and send first message to neiborhood.
-        // ---
-        // 1. call establishWithNeighbor(){}
-        // 2. call establishWithNeighbor(currentTable, ArrayList<Node>){}
-        // ---
-        // End Todo
-        // ***  
 
 
-        Socket s = null;
-        Thread serverT = new ServerHandler(s, ss, neiborhoodNum);
-        serverT.start();
-        // while (true)  
-        // { 
-        //     Socket s = null; 
-              
-        //     try 
-        //     { 
-        //         // socket object to receive incoming client requests 
-        //         s = ss.accept(); 
-                  
-        //         System.out.println("A new message is coming : " + s); 
-                  
-        //         // obtaining input and out streams 
-        //         DataInputStream incomingMsg = new DataInputStream(s.getInputStream()); 
-        //         DataOutputStream returnMsg = new DataOutputStream(s.getOutputStream()); 
-                  
-        //         System.out.println(""); 
-  
-        //         // create a new thread object 
-        //         Thread t = new ClientHandler(s, incomingMsg, returnMsg); 
-  
-        //         // Invoking the start() method 
-        //         t.start(); 
-                  
-        //     } 
-        //     catch (Exception e){ 
-        //         s.close(); 
-        //         e.printStackTrace(); 
-        //     } 
-        // }
+        Thread serverM = new ServerMother(portNum, neiborhoodNum);
+        serverM.start();
+
         RoutingTable table = new RoutingTable(config);
-        // System.out.println("Outgoing node:");
-        // System.out.println((table.getMsg().getOrigin().configToSring()));
-        // System.out.println (Arrays.toString(table.getMsg().getDistance()));
+        // // System.out.println("Outgoing node:");
+        // // System.out.println((table.getMsg().getOrigin().configToSring()));
+        // // System.out.println (Arrays.toString(table.getMsg().getDistance()));
 
-        // System.out.println(Arrays.toString(table.getMsg().getOrigin().get))
-        // table.getnodeId();
+        // // System.out.println(Arrays.toString(table.getMsg().getOrigin().get))
+        // // table.getnodeId();
         System.out.print("neiborhoodNum:");
         System.out.println(neiborhoodNum);
 
@@ -117,16 +51,19 @@ public class Server2
             // run
         }
 
-        for(int i = 0;i < neiborhoodNum;i++){
-            Node targetNode = table.getConfig().getNeighbors().get(i);
-            // RoutingTable table = table.clone();
-            // table.getMsg().setDestination(targetNode);
-            // System.out.println (Arrays.toString(table.getMsg().getDistance()));
+        Thread clientT = new ClientHandler(table);
 
-            Thread clientT = new ClientHandler(table, targetNode);
-            clientT.start();
+        clientT.start();
+        // for(int i = 0;i < neiborhoodNum;i++){
+        //     Node targetNode = table.getConfig().getNeighbors().get(i);
+        //     // RoutingTable table = table.clone();
+        //     // table.getMsg().setDestination(targetNode);
+        //     // System.out.println (Arrays.toString(table.getMsg().getDistance()));
 
-        }
+        //     Thread clientT = new ClientHandler(table, targetNode);
+        //     clientT.start();
+
+        // }
     }
 
     // Todo: Function needs to be implemented
@@ -146,6 +83,81 @@ public class Server2
 } 
   
 // ClientHandler class 
+class ServerMother extends Thread{
+    // private ObjectInputStream incomingMsg; 
+    // private DataOutputStream returnMsg;
+    // private static int neiborhoodNum;
+    // private static int inComingMsgCnt;
+    // Socket s; 
+    // ServerSocket ss;
+    // Message newComingObj;
+    private static int portNum;
+    private static int neiborhoodNum;
+
+    public ServerMother(int portNum, int neiborhoodNum)  
+    { 
+        // this.s = s;
+        // this.ss = ss;
+        // this.neiborhoodNum = neiborhoodNum;
+        // this.inComingMsgCnt = 0;
+        // this.incomingMsg = incomingMsg; 
+        // this.returnMsg = returnMsg; 
+        this.portNum = portNum;
+        this.neiborhoodNum = neiborhoodNum;
+    } 
+    @Override
+    public void run()
+    {
+// server is listening on port 5056 
+        try{
+            ServerSocket ss = new ServerSocket(this.portNum);                                       
+        
+              
+        // running infinite loop for getting 
+        // client request 
+        while (true)  
+        { 
+            Socket s = null; 
+              
+            try 
+            { 
+                // socket object to receive incoming client requests 
+                s = ss.accept(); 
+                  
+                System.out.println("A new client is connected : " + s); 
+                  
+                // obtaining input and out streams 
+                // DataInputStream dis = new DataInputStream(s.getInputStream()); 
+                // DataOutputStream dos = new DataOutputStream(s.getOutputStream()); 
+                  
+                System.out.println("Assigning new thread for this client"); 
+  
+                Thread serverT = new ServerHandler(s, ss, neiborhoodNum);
+                serverT.start();
+
+
+                // // create a new thread object 
+                // Thread t = new ClientHandler(s, dis, dos); 
+  
+                // Invoking the start() method 
+                // serverT.start(); 
+                  
+            } 
+            catch (Exception e){ 
+                s.close(); 
+                e.printStackTrace(); 
+            }
+            // catch(IOException e2){
+
+            // }        
+        }
+
+        }
+        catch(IOException e){
+        }      
+                
+    } 
+}
 class ServerHandler extends Thread{
     private ObjectInputStream incomingMsg; 
     private DataOutputStream returnMsg;
@@ -166,58 +178,58 @@ class ServerHandler extends Thread{
     @Override
     public void run()  
     {
-        String received; 
-        String toreturn; 
-        while (true)  
-        { 
-            Socket s = null; 
+        // String received; 
+        // String toreturn; 
+        // while (true)  
+        // { 
+        //     Socket s = null; 
               
-            try { 
-                s = ss.accept(); 
-                System.out.println("A new message is coming : " + s); 
-                incomingMsg = new ObjectInputStream(s.getInputStream()); 
-                DataOutputStream returnMsg = new DataOutputStream(s.getOutputStream());
+        //     try { 
+        //         s = ss.accept(); 
+        //         System.out.println("A new message is coming : " + s); 
+        //         incomingMsg = new ObjectInputStream(s.getInputStream()); 
+        //         DataOutputStream returnMsg = new DataOutputStream(s.getOutputStream());
 
-                newComingObj = (Message) incomingMsg.readObject();
-                System.out.println("Object received = " + Arrays.toString(newComingObj.getDistance()));
+        //         newComingObj = (Message) incomingMsg.readObject();
+        //         System.out.println("Object received = " + Arrays.toString(newComingObj.getDistance()));
 
-                inComingMsgCnt++;
-                if(inComingMsgCnt == neiborhoodNum){
-                    System.out.println("Merge table");
-                    inComingMsgCnt = 0;
+        //         inComingMsgCnt++;
+        //         if(inComingMsgCnt == neiborhoodNum){
+        //             System.out.println("Update finish, send to clients");
+        //             inComingMsgCnt = 0;
 
 
-                }
-                // returnMsg.writeUTF("Received, and close!"); 
+        //         }
+        //         // returnMsg.writeUTF("Received, and close!"); 
                 
-                this.s.close(); 
+        //         this.s.close(); 
 
-                // receive the answer from client 
-                // received = incomingMsg.readUTF(); 
+        //         // receive the answer from client 
+        //         // received = incomingMsg.readUTF(); 
                   
-                // if(received.equals("Exit")) 
-                // {  
-                //     System.out.println("Client " + this.s + " sends exit..."); 
-                //     System.out.println("Closing this connection."); 
-                //     this.s.close(); 
-                //     System.out.println("Connection closed"); 
-                //     break; 
-                // }
+        //         // if(received.equals("Exit")) 
+        //         // {  
+        //         //     System.out.println("Client " + this.s + " sends exit..."); 
+        //         //     System.out.println("Closing this connection."); 
+        //         //     this.s.close(); 
+        //         //     System.out.println("Connection closed"); 
+        //         //     break; 
+        //         // }
 
 
-                // returnMsg.writeUTF("Suppose received your table."); 
+        //         // returnMsg.writeUTF("Suppose received your table."); 
 
                   
-            } catch (SocketException se) {
-            System.exit(0);
-            } catch (IOException e) {
-            e.printStackTrace();
-            } catch (ClassNotFoundException cn) {
-            cn.printStackTrace();
-            } catch (NullPointerException ne){
+        //     } catch (SocketException se) {
+        //     System.exit(0);
+        //     } catch (IOException e) {
+        //     e.printStackTrace();
+        //     } catch (ClassNotFoundException cn) {
+        //     cn.printStackTrace();
+        //     } catch (NullPointerException ne){
 
-            }
-        }          
+        //     }
+        // }          
                   
         // String received; 
         // String toreturn; 
@@ -291,20 +303,23 @@ class ClientHandler extends Thread
     private ObjectInputStream inputStream = null;
     private ObjectOutputStream outputStream = null;
     private boolean isConnected = false;
+    private static int neiborhoodNum;
+
     // private ArrayList<Node> hosts;
     // Node host = new Node(Integer.parseInt(4), "dc06.utdallas.edu", "1233");
 
   
     // Constructor 
-    public ClientHandler(RoutingTable table, Node targetNode)  
+    public ClientHandler(RoutingTable table)  
     { 
         this.currentTable = table;
-        this.targetNode = targetNode;
+        this.neiborhoodNum = table.getConfig().getNeighborsCnt();
+        // this.targetNode = targetNode;
     } 
     public void sendMsg(Message msg, Node targetNode){
         // System.out.println("My target: "+targetNode.getHostName());
         try{
-            currentTable.getMsg().setDestination(targetNode);
+            // currentTable.getMsg().setDestination(targetNode);
 
             System.out.println("Ready to send msg to:"+ (currentTable.getMsg().getDestination().getNodeId()) + "Content: "+Arrays.toString(currentTable.getMsg().getDistance()));
 
@@ -343,9 +358,22 @@ class ClientHandler extends Thread
     
     @Override
     public void run()  
-    { 
+    {
 
-        sendMsg(currentTable.getMsg(), targetNode);
+        for(int i = 0;i < this.neiborhoodNum;i++){
+            Node targetNode = this.currentTable.getConfig().getNeighbors().get(i);
+
+            sendMsg(this.currentTable.getMsg(), targetNode);
+
+            // RoutingTable table = table.clone();
+            // table.getMsg().setDestination(targetNode);
+            // System.out.println (Arrays.toString(table.getMsg().getDistance()));
+
+            // Thread clientT = new ClientHandler(table, targetNode);
+            // clientT.start();
+
+        }
+
 
         // String received; 
         // String toreturn; 

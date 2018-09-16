@@ -75,13 +75,13 @@ public class RoutingTable{
         return;
     }
 
-    public int[] updateTable(int[] outerTable){
-        for (int i = 0; i < this.hop.length; i++) {
-            if (this.hop[i] > (khop[message.origin.getNodeId()] + message.distance[i]))
-                this.khop[i] = khop[message.origin.getNodeId()] + message.distance[i];
-            // }
-        }
-    }
+    // public int[] updateTable(int[] outerTable){
+    //     for (int i = 0; i < this.hop.length; i++) {
+    //         if (this.hop[i] > (this.hop[message.origin.getNodeId()] + message.distance[i]))
+    //             this.hop[i] = this.hop[message.origin.getNodeId()] + message.distance[i];
+    //         // }
+    //     }
+    // }
     public int getNodeId(){
         return this.myNodeId;
     }
