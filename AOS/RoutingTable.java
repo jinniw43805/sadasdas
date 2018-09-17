@@ -1,5 +1,8 @@
 package bin;
 import java.io.*;
+import java.text.*; 
+import java.util.*;
+import java.util.concurrent.*;
 
 public class RoutingTable{
     private int myNodeId;
@@ -25,6 +28,9 @@ public class RoutingTable{
     }
     public Message getMsg(){
         return this.msg;
+    }
+    public int[] getHop(){
+        return this.hop;
     }
     private int[] initHop(){
         int[] tmpInt = new int[this.config.getNumOfNode()];
@@ -75,13 +81,23 @@ public class RoutingTable{
         return;
     }
 
-    // public int[] updateTable(int[] outerTable){
-    //     for (int i = 0; i < this.hop.length; i++) {
-    //         if (this.hop[i] > (this.hop[message.origin.getNodeId()] + message.distance[i]))
-    //             this.hop[i] = this.hop[message.origin.getNodeId()] + message.distance[i];
-    //         // }
-    //     }
-    // }
+    public void updateTable(Message outerMessage){
+        for (int i = 0; i < this.hop.length; i++) {
+            if (this.hop[i] > (this.hop[outerMessage.getOrigin().getNodeId()] + outerMessage.getDistance()[i]));
+                this.hop[i] = this.hop[outerMessage.getOrigin().getNodeId()] + outerMessage.getDistance()[i];
+            }
+            // if(i == myNodeId || ){
+            //     // do nothing
+            // }else{
+
+            // }
+        }
+
+        this.msg.setDistance(this.hop);
+
+        System.out.println("update result" + Arrays.toString(this.hop));
+        return;
+    }
     public int getNodeId(){
         return this.myNodeId;
     }
