@@ -39,6 +39,7 @@ public class Server2
         RoutingTable table = new RoutingTable(config);
 
         System.out.println(neiborhoodNum);
+        System.out.println("this is rajan");
 
 
 
