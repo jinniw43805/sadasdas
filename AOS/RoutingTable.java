@@ -82,16 +82,26 @@ public class RoutingTable{
     }
 
     public void updateTable(Message outerMessage){
-        for (int i = 0; i < this.hop.length; i++) {
-            if (this.hop[i] > (this.hop[outerMessage.getOrigin().getNodeId()] + outerMessage.getDistance()[i]));
-                this.hop[i] = this.hop[outerMessage.getOrigin().getNodeId()] + outerMessage.getDistance()[i];
+            for (int i = 0; i < this.hop.length; i++) {
+            // if (this.hop[i] > (this.hop[outerMessage.getOrigin().getNodeId()] + outerMessage.getDistance()[i]));
+            //     this.hop[i] = this.hop[outerMessage.getOrigin().getNodeId()] + outerMessage.getDistance()[i];
+            
+                if(i == myNodeId || i == outerMessage.getOrigin().getNodeId() || this.hop[i] == 1){
+                    // do nothing
+                    // Not update yourself and your neiborhood;
+                }
+                else{
+                    if (this.hop[i] == outerMessage.getDistance()[i]){
+                        //do nothing
+                    }else{
+                        if (this.hop[i] > (this.hop[outerMessage.getOrigin().getNodeId()] + outerMessage.getDistance()[i]) || this.hop[i] == 0) ;
+                            this.hop[i] = this.hop[outerMessage.getOrigin().getNodeId()] + outerMessage.getDistance()[i];
+                        }
+                }
+                
             }
-            // if(i == myNodeId || ){
-            //     // do nothing
-            // }else{
-
-            // }
-        }
+            
+    
 
         this.msg.setDistance(this.hop);
 
